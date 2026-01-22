@@ -268,14 +268,33 @@
     }
 
     async function requestMotionPermissionIfNeeded() {
-      if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
-        const res = await DeviceMotionEvent.requestPermission();
-        if (res !== "granted") throw new Error("Motion permission not granted.");
-      }
-      if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
-        try { await DeviceOrientationEvent.requestPermission(); } catch (_) {}
-      }
-    }
+  // IMPORTANT: on iOS, the actual *call* to requestPermission()
+  // must happen synchronously inside the user gesture.
+  // So: create both promises first, then await them together.
+
+  const promises = [];
+
+  if (typeof DeviceMotionEvent !== "undefined" &&
+      typeof DeviceMotionEvent.requestPermission === "function") {
+    // Call immediately (still within gesture)
+    promises.push(DeviceMotionEvent.requestPermission());
+  }
+
+  if (typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function") {
+    // Call immediately (still within gesture)
+    promises.push(DeviceOrientationEvent.requestPermission());
+  }
+
+  if (promises.length === 0) return; // nothing gated on this device
+
+  const results = await Promise.all(promises);
+
+  // If either permission was denied, treat as failure
+  if (results.some(r => r !== "granted")) {
+    throw new Error("Motion/orientation permission not granted.");
+  }
+}
 
     let midiData = null;
     let parts = [];
@@ -386,29 +405,29 @@
       }
     }
 
-    async function enableAll() {
-      ui.enableBtn.disabled = true;
-      setState("enabling…");
-      try {
-        // iOS gesture rule: start both immediately (NO await first)
-        const permPromise = requestMotionPermissionIfNeeded();
-        const audioPromise = Tone.start();
-        await Promise.all([permPromise, audioPromise]);
+   async function enableAll() {
+  ui.enableBtn.disabled = true;
+  setState("enabling…");
 
-        attachMotionListeners();
+  try {
+    const permPromise = requestMotionPermissionIfNeeded(); // calls requestPermission() immediately
+    const audioPromise = Tone.start();                     // also starts immediately
+    await Promise.all([permPromise, audioPromise]);
 
-        setState("loading MIDI…");
-        await loadMidiFromUrl(MIDI_URL);
+    attachMotionListeners();
 
-        setState("ready (move to play)");
-      } catch (err) {
-        console.error(err);
-        setState("error");
-        alert(String(err?.message || err));
-      } finally {
-        ui.enableBtn.disabled = false;
-      }
-    }
+    setState("loading MIDI…");
+    await loadMidiFromUrl(MIDI_URL);
+
+    setState("ready (move to play)");
+  } catch (err) {
+    console.error(err);
+    setState("error");
+    alert(String((err && err.message) || err));
+  } finally {
+    ui.enableBtn.disabled = false;
+  }
+}
 
     // Using pointerdown helps on iOS (more reliably treated as a gesture than click)
     ui.enableBtn.addEventListener("pointerdown", enableAll);
