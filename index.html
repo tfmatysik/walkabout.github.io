@@ -5,49 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Motion MIDI Tempo (GitHub Pages)</title>
+  <title>Motion MIDI Tempo (GitHub Pages) — v0.7</title>
   <style>
     :root { --bg:#0b0e14; --card:#121826; --text:#e6e9ef; --muted:#9aa4b2; --accent:#7aa2f7; --good:#9ece6a; --warn:#e0af68; --bad:#f7768e; }
     * { box-sizing:border-box; }
-    body {
-      margin:0; font-family:-apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    body{
+      margin:0;
+      font-family:-apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       background: radial-gradient(1200px 800px at 50% -10%, #1a2140 0%, var(--bg) 55%);
       color:var(--text);
-      min-height:100svh;
+      min-height:100vh;
       display:flex;
       align-items:center;
       justify-content:center;
       padding:16px;
     }
-    .wrap { width:min(720px, 100%); }
-    h1 { font-size:22px; margin:0 0 10px; letter-spacing:0.2px; }
-    p { margin:0; color:var(--muted); line-height:1.35; }
-    .card {
-      background: color-mix(in srgb, var(--card) 92%, #000 8%);
-      border: 1px solid rgba(255,255,255,0.08);
+    .wrap{ width:min(760px, 100%); }
+    .card{
+      background: #121826;
+      border: 1px solid rgba(255,255,255,0.10);
       border-radius:18px;
       padding:16px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.35);
     }
-    .grid { display:grid; gap:12px; }
-    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .btn {
-      appearance:none; border:1px solid rgba(255,255,255,0.12);
+    .grid{ display:grid; gap:12px; }
+    h1{ font-size:22px; margin:0; letter-spacing:0.2px; }
+    p{ margin:0; color:var(--muted); line-height:1.35; }
+    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.06);
       color:var(--text);
       padding:12px 14px;
       border-radius:14px;
-      font-weight:600;
+      font-weight:700;
       font-size:16px;
       touch-action: manipulation;
     }
-    .btn.primary { background: color-mix(in srgb, var(--accent) 36%, rgba(255,255,255,0.06)); border-color: color-mix(in srgb, var(--accent) 60%, rgba(255,255,255,0.12)); }
-    .btn.danger { background: color-mix(in srgb, var(--bad) 30%, rgba(255,255,255,0.06)); border-color: color-mix(in srgb, var(--bad) 60%, rgba(255,255,255,0.12)); }
-    .btn:disabled { opacity:0.5; }
-    .meter { height:12px; border-radius:999px; background: rgba(255,255,255,0.08); overflow:hidden; }
-    .meter > div { height:100%; width:0%; background: linear-gradient(90deg, var(--good), var(--warn), var(--bad)); transition: width 90ms linear; }
-    .pill {
-      display:inline-flex; align-items:center; gap:8px;
+    .btn.primary{ background: rgba(122,162,247,0.22); border-color: rgba(122,162,247,0.55); }
+    .btn.danger{ background: rgba(247,118,142,0.20); border-color: rgba(247,118,142,0.55); }
+    .btn:disabled{ opacity:0.55; }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
       padding:8px 10px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,0.10);
@@ -56,45 +58,71 @@
       color: var(--muted);
       white-space:nowrap;
     }
-    .pill b { color: var(--text); font-weight:700; }
-    .small { font-size:13px; color:var(--muted); }
-    .warnbox {
+    .pill b{ color:var(--text); font-weight:800; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .small{ font-size:13px; color:var(--muted); line-height:1.35; }
+    .meter{ height:12px; border-radius:999px; background: rgba(255,255,255,0.08); overflow:hidden; }
+    .meter > div{ height:100%; width:0%; background: linear-gradient(90deg, var(--good), var(--warn), var(--bad)); transition: width 90ms linear; }
+    .box{
       border-radius:14px;
       padding:12px;
-      border:1px solid rgba(224,175,104,0.35);
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.05);
+    }
+    .warn{
+      border-color: rgba(224,175,104,0.35);
       background: rgba(224,175,104,0.10);
-      color: color-mix(in srgb, var(--warn) 85%, var(--text));
+      color: #f3d7b0;
     }
-    .okbox {
-      border-radius:14px;
-      padding:12px;
-      border:1px solid rgba(158,206,106,0.35);
+    .ok{
+      border-color: rgba(158,206,106,0.35);
       background: rgba(158,206,106,0.10);
-      color: color-mix(in srgb, var(--good) 90%, var(--text));
+      color: #cfeec0;
     }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .version{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.06);
+    }
+    .version .tag{
+      font-weight:900;
+      letter-spacing:0.5px;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card grid">
+
+      <!-- VERSION BANNER -->
+      <div class="version">
+        <div class="tag">VERSION: v0.7</div>
+        <div class="mono small" id="buildStamp">build: —</div>
+      </div>
+
       <div class="grid" style="gap:6px;">
         <h1>Motion-Controlled MIDI Tempo (iPhone)</h1>
-        <p>Tap <b>Enable Motion + Audio</b>, then walk around. Debussy plays on a piano, speeding up with motion and pausing when you stop.</p>
+        <p>Tap <b>Enable Motion + Audio</b>, then walk around. More motion → faster tempo. When you stop, it pauses.</p>
       </div>
 
-      <div id="secureHint" class="warnbox" style="display:none;">
-        <b>Heads up:</b> iPhone motion sensors only work on <b>HTTPS</b> (or localhost).
+      <div id="secureHint" class="box warn" style="display:none;">
+        <b>Heads up:</b> iPhone motion sensors require <b>HTTPS</b>. GitHub Pages is HTTPS, so you’re good — but opening a local file (file://) won’t work.
       </div>
 
-      <div class="grid" style="gap:10px;">
+      <div class="box">
         <div class="small"><b>MIDI source</b>: <span class="mono" id="midiUrl">assets/debussy.mid</span></div>
-        <div class="small">This fetches from your GitHub Pages site (no CORS issues). Put the file at <span class="mono">./assets/debussy.mid</span>.</div>
-        <div class="row">
-          <button id="enableBtn" class="btn primary">Enable Motion + Audio</button>
-          <button id="stopBtn" class="btn danger" disabled>Stop</button>
-          <span class="pill"><span>State:</span> <b id="state">idle</b></span>
-        </div>
+        <div class="small">Make sure your repo contains: <span class="mono">./assets/debussy.mid</span></div>
+      </div>
+
+      <div class="row">
+        <button id="enableBtn" class="btn primary">Enable Motion + Audio</button>
+        <button id="stopBtn" class="btn danger" disabled>Stop</button>
+        <span class="pill"><span>State:</span> <b id="state">idle</b></span>
       </div>
 
       <div class="grid" style="gap:10px;">
@@ -103,7 +131,7 @@
           <span class="pill"><span>Tempo:</span> <b id="bpmVal" class="mono">—</b></span>
           <span class="pill"><span>Threshold:</span> <b id="thrVal" class="mono">—</b></span>
         </div>
-        <div class="meter" aria-label="motion meter"><div id="meterFill"></div></div>
+        <div class="meter"><div id="meterFill"></div></div>
       </div>
 
       <div class="grid" style="gap:10px;">
@@ -132,9 +160,12 @@
         <input id="smoothing" type="range" min="0.50" max="0.98" step="0.01" value="0.90" />
       </div>
 
-      <div class="okbox small">
-        Motion intensity is mapped to BPM and applied to <span class="mono">Tone.Transport.bpm</span>. When intensity stays below the threshold briefly, the transport pauses.
+      <div class="box ok small">
+        <b>Implementation note:</b> iOS Safari is strict about the motion permission prompt being triggered by a direct tap.
+        This version calls <span class="mono">DeviceMotionEvent.requestPermission()</span> directly inside the click handler (no async/await in that path).
       </div>
+
+      <div class="small">Libraries from CDN: Tone.js + @tonejs/midi. Piano sound is a sampled Salamander Grand hosted by Tone.js.</div>
     </div>
   </div>
 
@@ -142,10 +173,28 @@
   <script src="https://unpkg.com/@tonejs/midi@2.0.28/build/Midi.js"></script>
 
   <script>
-    const MIDI_URL = "./assets/debussy.mid";
+    // ===========================
+    // VERSION
+    // ===========================
+    var VERSION = "v0.7";
+    document.getElementById("buildStamp").textContent = "build: " + VERSION + " / " + new Date().toISOString();
 
-    const ui = {
-      midiUrl: document.getElementById("midiUrl"),
+    // ===========================
+    // CONFIG
+    // ===========================
+    var MIDI_URL = "./assets/debussy.mid";
+    document.getElementById("midiUrl").textContent = MIDI_URL;
+
+    // HTTPS hint
+    try {
+      var isSecure = window.isSecureContext || location.hostname === "localhost";
+      if (!isSecure) document.getElementById("secureHint").style.display = "block";
+    } catch (e) {}
+
+    // ===========================
+    // UI refs
+    // ===========================
+    var ui = {
       enableBtn: document.getElementById("enableBtn"),
       stopBtn: document.getElementById("stopBtn"),
       state: document.getElementById("state"),
@@ -153,7 +202,6 @@
       motionVal: document.getElementById("motionVal"),
       bpmVal: document.getElementById("bpmVal"),
       thrVal: document.getElementById("thrVal"),
-      secureHint: document.getElementById("secureHint"),
       minBpm: document.getElementById("minBpm"),
       maxBpm: document.getElementById("maxBpm"),
       threshold: document.getElementById("threshold"),
@@ -163,13 +211,9 @@
       thresholdLabel: document.getElementById("thresholdLabel"),
       smoothingLabel: document.getElementById("smoothingLabel"),
     };
-    ui.midiUrl.textContent = MIDI_URL;
 
-    // HTTPS hint
-    try {
-      const isSecure = window.isSecureContext || location.hostname === "localhost";
-      if (!isSecure) ui.secureHint.style.display = "block";
-    } catch (_) {}
+    function setState(t) { ui.state.textContent = t; }
+    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
     function getParams() {
       return {
@@ -179,6 +223,7 @@
         smoothing: Number(ui.smoothing.value),
       };
     }
+
     function refreshLabels() {
       ui.minBpmLabel.textContent = ui.minBpm.value;
       ui.maxBpmLabel.textContent = ui.maxBpm.value;
@@ -191,68 +236,75 @@
     ui.smoothing.addEventListener("input", refreshLabels);
     refreshLabels();
 
-    const MOTION_STALE_MS = 1500;
-    const PAUSE_DEBOUNCE_MS = 350;
+    // ===========================
+    // Motion signal
+    // ===========================
+    var MOTION_STALE_MS = 1500;
+    var PAUSE_DEBOUNCE_MS = 350;
 
-    let motionEnabled = false;
-    let lastMotionTs = 0;
-    let intensity = 0;
+    var motionEnabled = false;
+    var lastMotionTs = 0;
+    var intensity = 0;
 
-    let isPlaying = false;
-    let pausedAtSeconds = 0;
-    let lastAboveThresholdTs = 0;
-
-    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
     function mapIntensityToBpm(inten, minBpm, maxBpm) {
-      const scaled = 1 - Math.exp(-inten * 2.3);
+      var scaled = 1 - Math.exp(-inten * 2.3); // 0..1
       return minBpm + scaled * (maxBpm - minBpm);
     }
+
     function updateUI(inten, bpm, threshold) {
       ui.motionVal.textContent = inten.toFixed(2);
       ui.bpmVal.textContent = bpm ? bpm.toFixed(0) : "—";
       ui.thrVal.textContent = threshold.toFixed(2);
-      const meterPct = clamp((inten / 1.2) * 100, 0, 100);
+      var meterPct = clamp((inten / 1.2) * 100, 0, 100);
       ui.meterFill.style.width = meterPct.toFixed(1) + "%";
     }
 
     function computeInstantIntensity(ev) {
-      const a = ev.acceleration || ev.accelerationIncludingGravity;
-      const r = ev.rotationRate;
+      var a = ev.acceleration || ev.accelerationIncludingGravity;
+      var r = ev.rotationRate;
 
-      const ax = a && Number.isFinite(a.x) ? a.x : 0;
-      const ay = a && Number.isFinite(a.y) ? a.y : 0;
-      const az = a && Number.isFinite(a.z) ? a.z : 0;
-      const accelMag = Math.sqrt(ax*ax + ay*ay + az*az);
+      var ax = (a && isFinite(a.x)) ? a.x : 0;
+      var ay = (a && isFinite(a.y)) ? a.y : 0;
+      var az = (a && isFinite(a.z)) ? a.z : 0;
+      var accelMag = Math.sqrt(ax*ax + ay*ay + az*az);
 
-      const ra = r && Number.isFinite(r.alpha) ? r.alpha : 0;
-      const rb = r && Number.isFinite(r.beta) ? r.beta : 0;
-      const rg = r && Number.isFinite(r.gamma) ? r.gamma : 0;
-      const rotMag = Math.sqrt(ra*ra + rb*rb + rg*rg);
-      const rotScaled = rotMag / 180;
+      var ra = (r && isFinite(r.alpha)) ? r.alpha : 0;
+      var rb = (r && isFinite(r.beta)) ? r.beta : 0;
+      var rg = (r && isFinite(r.gamma)) ? r.gamma : 0;
+      var rotMag = Math.sqrt(ra*ra + rb*rb + rg*rg);
+      var rotScaled = rotMag / 180;
 
       return accelMag * 0.55 + rotScaled * 0.45;
     }
 
     function onMotion(ev) {
-      lastMotionTs = performance.now();
-      const { smoothing } = getParams();
-      const inst = computeInstantIntensity(ev);
-      intensity = smoothing * intensity + (1 - smoothing) * inst;
+      lastMotionTs = (window.performance && performance.now) ? performance.now() : Date.now();
+      var p = getParams();
+      var inst = computeInstantIntensity(ev);
+      intensity = p.smoothing * intensity + (1 - p.smoothing) * inst;
       tickPlayback();
     }
 
-    // orientation fallback
-    let lastOrient = null;
+    // Orientation fallback (no permission request; just listen)
+    var lastOrient = null;
     function onOrientation(ev) {
-      lastMotionTs = performance.now();
+      lastMotionTs = (window.performance && performance.now) ? performance.now() : Date.now();
       if (lastOrient) {
-        const da = (ev.alpha ?? 0) - (lastOrient.alpha ?? 0);
-        const db = (ev.beta ?? 0) - (lastOrient.beta ?? 0);
-        const dg = (ev.gamma ?? 0) - (lastOrient.gamma ?? 0);
-        const d = Math.sqrt(da*da + db*db + dg*dg);
-        const inst = d / 90;
-        const { smoothing } = getParams();
-        intensity = smoothing * intensity + (1 - smoothing) * inst;
+        var a0 = (ev.alpha != null ? ev.alpha : 0);
+        var b0 = (ev.beta  != null ? ev.beta  : 0);
+        var g0 = (ev.gamma != null ? ev.gamma : 0);
+        var a1 = (lastOrient.alpha != null ? lastOrient.alpha : 0);
+        var b1 = (lastOrient.beta  != null ? lastOrient.beta  : 0);
+        var g1 = (lastOrient.gamma != null ? lastOrient.gamma : 0);
+
+        var da = a0 - a1;
+        var db = b0 - b1;
+        var dg = g0 - g1;
+        var d = Math.sqrt(da*da + db*db + dg*dg);
+        var inst = d / 90;
+
+        var p = getParams();
+        intensity = p.smoothing * intensity + (1 - p.smoothing) * inst;
         tickPlayback();
       }
       lastOrient = { alpha: ev.alpha, beta: ev.beta, gamma: ev.gamma };
@@ -261,49 +313,23 @@
     function attachMotionListeners() {
       if (motionEnabled) return;
       motionEnabled = true;
-      lastMotionTs = performance.now();
-      lastAboveThresholdTs = performance.now();
-      window.addEventListener("devicemotion", onMotion, { passive: true });
-      window.addEventListener("deviceorientation", onOrientation, { passive: true });
+      lastMotionTs = (window.performance && performance.now) ? performance.now() : Date.now();
+      window.addEventListener("devicemotion", onMotion, { passive:true });
+      window.addEventListener("deviceorientation", onOrientation, { passive:true });
     }
 
-    async function requestMotionPermissionIfNeeded() {
-  // IMPORTANT: on iOS, the actual *call* to requestPermission()
-  // must happen synchronously inside the user gesture.
-  // So: create both promises first, then await them together.
-
-  const promises = [];
-
-  if (typeof DeviceMotionEvent !== "undefined" &&
-      typeof DeviceMotionEvent.requestPermission === "function") {
-    // Call immediately (still within gesture)
-    promises.push(DeviceMotionEvent.requestPermission());
-  }
-
-  if (typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function") {
-    // Call immediately (still within gesture)
-    promises.push(DeviceOrientationEvent.requestPermission());
-  }
-
-  if (promises.length === 0) return; // nothing gated on this device
-
-  const results = await Promise.all(promises);
-
-  // If either permission was denied, treat as failure
-  if (results.some(r => r !== "granted")) {
-    throw new Error("Motion/orientation permission not granted.");
-  }
-}
-
-    let midiData = null;
-    let parts = [];
-    let piano = null;
-
-    function setState(t) { ui.state.textContent = t; }
+    // ===========================
+    // MIDI + piano
+    // ===========================
+    var midiData = null;
+    var parts = [];
+    var piano = null;
 
     function clearParts() {
-      for (const p of parts) { try { p.stop(); p.dispose(); } catch (_) {} }
+      for (var i=0; i<parts.length; i++) {
+        try { parts[i].stop(); } catch(e) {}
+        try { parts[i].dispose(); } catch(e) {}
+      }
       parts = [];
     }
 
@@ -311,17 +337,17 @@
       if (piano) return;
       piano = new Tone.Sampler({
         urls: {
-          A0: "A0.mp3", C1: "C1.mp3", "D#1": "Ds1.mp3", "F#1": "Fs1.mp3",
-          A1: "A1.mp3", C2: "C2.mp3", "D#2": "Ds2.mp3", "F#2": "Fs2.mp3",
-          A2: "A2.mp3", C3: "C3.mp3", "D#3": "Ds3.mp3", "F#3": "Fs3.mp3",
-          A3: "A3.mp3", C4: "C4.mp3", "D#4": "Ds4.mp3", "F#4": "Fs4.mp3",
-          A4: "A4.mp3", C5: "C5.mp3", "D#5": "Ds5.mp3", "F#5": "Fs5.mp3",
-          A5: "A5.mp3", C6: "C6.mp3", "D#6": "Ds6.mp3", "F#6": "Fs6.mp3",
-          A6: "A6.mp3", C7: "C7.mp3", "D#7": "Ds7.mp3", "F#7": "Fs7.mp3",
-          A7: "A7.mp3", C8: "C8.mp3",
+          A0:"A0.mp3", C1:"C1.mp3", "D#1":"Ds1.mp3", "F#1":"Fs1.mp3",
+          A1:"A1.mp3", C2:"C2.mp3", "D#2":"Ds2.mp3", "F#2":"Fs2.mp3",
+          A2:"A2.mp3", C3:"C3.mp3", "D#3":"Ds3.mp3", "F#3":"Fs3.mp3",
+          A3:"A3.mp3", C4:"C4.mp3", "D#4":"Ds4.mp3", "F#4":"Fs4.mp3",
+          A4:"A4.mp3", C5:"C5.mp3", "D#5":"Ds5.mp3", "F#5":"Fs5.mp3",
+          A5:"A5.mp3", C6:"C6.mp3", "D#6":"Ds6.mp3", "F#6":"Fs6.mp3",
+          A6:"A6.mp3", C7:"C7.mp3", "D#7":"Ds7.mp3", "F#7":"Fs7.mp3",
+          A7:"A7.mp3", C8:"C8.mp3",
         },
         release: 1,
-        baseUrl: "https://tonejs.github.io/audio/salamander/",
+        baseUrl: "https://tonejs.github.io/audio/salamander/"
       }).toDestination();
       piano.volume.value = -6;
     }
@@ -334,27 +360,50 @@
       Tone.Transport.position = 0;
       Tone.Transport.seconds = 0;
 
-      for (const track of midi.tracks) {
-        if (!track.notes?.length) continue;
-        const events = track.notes.map(n => ({ time:n.time, duration:n.duration, midi:n.midi, velocity:n.velocity }));
-        const part = new Tone.Part((time, v) => {
-          const freq = Tone.Frequency(v.midi, "midi");
-          const vel = clamp(v.velocity ?? 0.9, 0, 1);
+      for (var t=0; t<midi.tracks.length; t++) {
+        var track = midi.tracks[t];
+        if (!track.notes || track.notes.length === 0) continue;
+
+        var events = [];
+        for (var n=0; n<track.notes.length; n++) {
+          var note = track.notes[n];
+          events.push({
+            time: note.time,
+            duration: note.duration,
+            midi: note.midi,
+            velocity: note.velocity
+          });
+        }
+
+        var part = new Tone.Part(function(time, v) {
+          var freq = Tone.Frequency(v.midi, "midi");
+          var vel = clamp((v.velocity != null ? v.velocity : 0.9), 0, 1);
           piano.triggerAttackRelease(freq, v.duration, time, vel);
         }, events);
+
         part.start(0);
         parts.push(part);
       }
+
       setState("ready (move to play)");
     }
 
-    async function loadMidiFromUrl(url) {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`Failed to fetch MIDI (HTTP ${res.status}).`);
-      const buf = await res.arrayBuffer();
-      midiData = new Midi(buf);
-      scheduleMidi(midiData);
+    function loadMidiFromUrl(url) {
+      return fetch(url).then(function(res) {
+        if (!res.ok) throw new Error("Failed to fetch MIDI (HTTP " + res.status + ").");
+        return res.arrayBuffer();
+      }).then(function(buf) {
+        midiData = new Midi(buf);
+        scheduleMidi(midiData);
+      });
     }
+
+    // ===========================
+    // Transport control (motion -> tempo, pause on stillness)
+    // ===========================
+    var isPlaying = false;
+    var pausedAtSeconds = 0;
+    var lastAboveThresholdTs = 0;
 
     function startTransport() {
       if (isPlaying) return;
@@ -363,6 +412,7 @@
       ui.stopBtn.disabled = false;
       setState("playing");
     }
+
     function pauseTransport() {
       if (!isPlaying) return;
       pausedAtSeconds = Tone.Transport.seconds;
@@ -370,26 +420,27 @@
       isPlaying = false;
       setState("paused");
     }
+
     function stopAll() {
       pausedAtSeconds = 0;
       isPlaying = false;
       intensity = 0;
       lastOrient = null;
-      try { Tone.Transport.stop(); } catch (_) {}
+      try { Tone.Transport.stop(); } catch(e) {}
       updateUI(0, null, getParams().threshold);
       setState("stopped");
       ui.stopBtn.disabled = true;
     }
 
     function tickPlayback() {
-      const now = performance.now();
-      const { minBpm, maxBpm, threshold } = getParams();
+      var now = (window.performance && performance.now) ? performance.now() : Date.now();
+      var p = getParams();
+      var bpm = mapIntensityToBpm(intensity, p.minBpm, p.maxBpm);
 
-      const bpm = mapIntensityToBpm(intensity, minBpm, maxBpm);
-      updateUI(intensity, midiData ? bpm : null, threshold);
+      updateUI(intensity, (midiData ? bpm : null), p.threshold);
       if (!midiData) return;
 
-      if (now - lastMotionTs > MOTION_STALE_MS) {
+      if ((now - lastMotionTs) > MOTION_STALE_MS) {
         pauseTransport();
         setState("no motion data");
         return;
@@ -397,43 +448,66 @@
 
       Tone.Transport.bpm.rampTo(clamp(bpm, 20, 400), 0.08);
 
-      if (intensity >= threshold) {
+      if (intensity >= p.threshold) {
         lastAboveThresholdTs = now;
         if (!isPlaying) startTransport();
-      } else if (isPlaying && (now - lastAboveThresholdTs) > PAUSE_DEBOUNCE_MS) {
-        pauseTransport();
+      } else {
+        if (isPlaying && (now - lastAboveThresholdTs) > PAUSE_DEBOUNCE_MS) {
+          pauseTransport();
+        }
       }
     }
 
-   async function enableAll() {
-  ui.enableBtn.disabled = true;
-  setState("enabling…");
+    // ===========================
+    // iOS permission + startup (NO async/await)
+    // ===========================
+    function enableAllFromGesture() {
+      ui.enableBtn.disabled = true;
+      setState("requesting motion permission…");
 
-  try {
-    const permPromise = requestMotionPermissionIfNeeded(); // calls requestPermission() immediately
-    const audioPromise = Tone.start();                     // also starts immediately
-    await Promise.all([permPromise, audioPromise]);
+      var motionPermPromise = Promise.resolve("granted");
 
-    attachMotionListeners();
+      if (typeof DeviceMotionEvent !== "undefined" &&
+          typeof DeviceMotionEvent.requestPermission === "function") {
+        try {
+          // MUST be called directly inside the click handler.
+          motionPermPromise = DeviceMotionEvent.requestPermission();
+        } catch (e) {
+          motionPermPromise = Promise.reject(e);
+        }
+      }
 
-    setState("loading MIDI…");
-    await loadMidiFromUrl(MIDI_URL);
+      motionPermPromise.then(function(res) {
+        if (res !== "granted") throw new Error("Motion permission not granted.");
 
-    setState("ready (move to play)");
-  } catch (err) {
-    console.error(err);
-    setState("error");
-    alert(String((err && err.message) || err));
-  } finally {
-    ui.enableBtn.disabled = false;
-  }
-}
+        setState("starting audio…");
+        return Tone.start();
+      }).then(function() {
+        attachMotionListeners();
 
-    // Using pointerdown helps on iOS (more reliably treated as a gesture than click)
-    ui.enableBtn.addEventListener("pointerdown", enableAll);
-    ui.stopBtn.addEventListener("pointerdown", stopAll);
+        setState("loading MIDI…");
+        return loadMidiFromUrl(MIDI_URL);
+      }).then(function() {
+        updateUI(intensity, null, getParams().threshold);
+        ui.stopBtn.disabled = false;
+        setState("ready (move to play)");
+      }).catch(function(err) {
+        console.error(err);
+        setState("error");
+        alert(String((err && err.message) || err));
+      }).finally(function() {
+        ui.enableBtn.disabled = false;
+      });
+    }
 
-    setInterval(() => { if (motionEnabled) tickPlayback(); }, 200);
+    ui.enableBtn.addEventListener("click", enableAllFromGesture);
+    ui.stopBtn.addEventListener("click", stopAll);
+
+    // keep ticking for stale detection
+    setInterval(function() {
+      if (!motionEnabled) return;
+      tickPlayback();
+    }, 200);
   </script>
 </body>
 </html>
