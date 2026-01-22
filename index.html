@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Motion MIDI Tempo (GitHub Pages)<\/title>
+  <title>Motion MIDI Tempo (GitHub Pages)</title>
   <style>
     :root { --bg:#0b0e14; --card:#121826; --text:#e6e9ef; --muted:#9aa4b2; --accent:#7aa2f7; --good:#9ece6a; --warn:#e0af68; --bad:#f7768e; }
     * { box-sizing:border-box; }
@@ -44,7 +44,6 @@
     .btn.primary { background: color-mix(in srgb, var(--accent) 36%, rgba(255,255,255,0.06)); border-color: color-mix(in srgb, var(--accent) 60%, rgba(255,255,255,0.12)); }
     .btn.danger { background: color-mix(in srgb, var(--bad) 30%, rgba(255,255,255,0.06)); border-color: color-mix(in srgb, var(--bad) 60%, rgba(255,255,255,0.12)); }
     .btn:disabled { opacity:0.5; }
-    input[type=file] { width:100%; }
     .meter { height:12px; border-radius:999px; background: rgba(255,255,255,0.08); overflow:hidden; }
     .meter > div { height:100%; width:0%; background: linear-gradient(90deg, var(--good), var(--warn), var(--bad)); transition: width 90ms linear; }
     .pill {
@@ -74,25 +73,23 @@
       color: color-mix(in srgb, var(--good) 90%, var(--text));
     }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-    a { color:var(--accent); text-decoration:none; }
-    a:hover { text-decoration:underline; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card grid">
       <div class="grid" style="gap:6px;">
-        <h1>Motion‑Controlled MIDI Tempo (iPhone)<\/h1>
-        <p>Tap <b>Enable Motion + Audio</b>, then walk around. A built-in Debussy MIDI plays on a piano, speeding up with motion and pausing when you stop (like <i>Untitled Goose Game</i>).</p>
+        <h1>Motion-Controlled MIDI Tempo (iPhone)</h1>
+        <p>Tap <b>Enable Motion + Audio</b>, then walk around. Debussy plays on a piano, speeding up with motion and pausing when you stop.</p>
       </div>
 
       <div id="secureHint" class="warnbox" style="display:none;">
-        <b>Heads up:</b> iPhone motion sensors only work on <b>HTTPS</b> (or localhost). If this is opened from a plain file (file://) or HTTP, motion events may be blocked.
+        <b>Heads up:</b> iPhone motion sensors only work on <b>HTTPS</b> (or localhost).
       </div>
 
       <div class="grid" style="gap:10px;">
         <div class="small"><b>MIDI source</b>: <span class="mono" id="midiUrl">assets/debussy.mid</span></div>
-        <div class="small">For GitHub Pages, the MIDI is fetched from this site’s <span class="mono">assets/</span> folder (no CORS issues).</div>
+        <div class="small">This fetches from your GitHub Pages site (no CORS issues). Put the file at <span class="mono">./assets/debussy.mid</span>.</div>
         <div class="row">
           <button id="enableBtn" class="btn primary">Enable Motion + Audio</button>
           <button id="stopBtn" class="btn danger" disabled>Stop</button>
@@ -107,7 +104,6 @@
           <span class="pill"><span>Threshold:</span> <b id="thrVal" class="mono">—</b></span>
         </div>
         <div class="meter" aria-label="motion meter"><div id="meterFill"></div></div>
-        <div class="small">Tip: keep the phone in your hand or pocket. If it pauses too easily, raise the threshold; if it never pauses, lower it.</div>
       </div>
 
       <div class="grid" style="gap:10px;">
@@ -124,134 +120,102 @@
         <input id="maxBpm" type="range" min="80" max="320" step="1" value="180" />
 
         <div class="row" style="justify-content:space-between;">
-          <label class="small" for="threshold"><b>Pause threshold</b> (motion below this pauses)</label>
+          <label class="small" for="threshold"><b>Pause threshold</b></label>
           <span class="small mono" id="thresholdLabel">0.12</span>
         </div>
         <input id="threshold" type="range" min="0.02" max="0.60" step="0.01" value="0.12" />
 
         <div class="row" style="justify-content:space-between;">
-          <label class="small" for="smoothing"><b>Smoothing</b> (higher = steadier)</label>
+          <label class="small" for="smoothing"><b>Smoothing</b></label>
           <span class="small mono" id="smoothingLabel">0.90</span>
         </div>
         <input id="smoothing" type="range" min="0.50" max="0.98" step="0.01" value="0.90" />
       </div>
 
       <div class="okbox small">
-        <b>How it works:</b> the app measures motion intensity from the iPhone’s <span class="mono">devicemotion</span> (acceleration + rotation when available), maps that to BPM, and updates <span class="mono">Tone.Transport.bpm</span> in real time. When intensity drops under the threshold for a moment, it pauses the transport.
+        Motion intensity is mapped to BPM and applied to <span class="mono">Tone.Transport.bpm</span>. When intensity stays below the threshold briefly, the transport pauses.
       </div>
-
-      <div class="small">Built with <a href="https://tonejs.github.io/" target="_blank" rel="noreferrer">Tone.js</a> + <a href="https://github.com/Tonejs/Midi" target="_blank" rel="noreferrer">@tonejs/midi</a> (loaded from CDN). Works best in Safari on iOS 13+.</div>
     </div>
   </div>
 
-  <!-- Tone.js + MIDI parser -->
   <script src="https://unpkg.com/tone@14.8.49/build/Tone.js"></script>
   <script src="https://unpkg.com/@tonejs/midi@2.0.28/build/Midi.js"></script>
 
   <script>
-    // -----------------------
-    // iPhone / iOS notes
-    // -----------------------
-    // - Motion sensors require HTTPS (or localhost)
-    // - iOS 13+ requires a user gesture + permission request for motion
-    // - Audio also requires a user gesture to start
-
-    // Put your MIDI file at: ./assets/debussy.mid (same repo as this page)
-    const MIDI_URL = './assets/debussy.mid';
+    const MIDI_URL = "./assets/debussy.mid";
 
     const ui = {
-      midiUrl: document.getElementById('midiUrl'),
-      enableBtn: document.getElementById('enableBtn'),
-      stopBtn: document.getElementById('stopBtn'),
-      state: document.getElementById('state'),
-      meterFill: document.getElementById('meterFill'),
-      motionVal: document.getElementById('motionVal'),
-      bpmVal: document.getElementById('bpmVal'),
-      thrVal: document.getElementById('thrVal'),
-      secureHint: document.getElementById('secureHint'),
-
-      minBpm: document.getElementById('minBpm'),
-      maxBpm: document.getElementById('maxBpm'),
-      threshold: document.getElementById('threshold'),
-      smoothing: document.getElementById('smoothing'),
-      minBpmLabel: document.getElementById('minBpmLabel'),
-      maxBpmLabel: document.getElementById('maxBpmLabel'),
-      thresholdLabel: document.getElementById('thresholdLabel'),
-      smoothingLabel: document.getElementById('smoothingLabel'),
+      midiUrl: document.getElementById("midiUrl"),
+      enableBtn: document.getElementById("enableBtn"),
+      stopBtn: document.getElementById("stopBtn"),
+      state: document.getElementById("state"),
+      meterFill: document.getElementById("meterFill"),
+      motionVal: document.getElementById("motionVal"),
+      bpmVal: document.getElementById("bpmVal"),
+      thrVal: document.getElementById("thrVal"),
+      secureHint: document.getElementById("secureHint"),
+      minBpm: document.getElementById("minBpm"),
+      maxBpm: document.getElementById("maxBpm"),
+      threshold: document.getElementById("threshold"),
+      smoothing: document.getElementById("smoothing"),
+      minBpmLabel: document.getElementById("minBpmLabel"),
+      maxBpmLabel: document.getElementById("maxBpmLabel"),
+      thresholdLabel: document.getElementById("thresholdLabel"),
+      smoothingLabel: document.getElementById("smoothingLabel"),
     };
+    ui.midiUrl.textContent = MIDI_URL;
 
-    // Show HTTPS hint if needed
+    // HTTPS hint
     try {
-      const isSecure = window.isSecureContext || location.hostname === 'localhost';
-      if (!isSecure) ui.secureHint.style.display = 'block';
+      const isSecure = window.isSecureContext || location.hostname === "localhost";
+      if (!isSecure) ui.secureHint.style.display = "block";
     } catch (_) {}
 
-    // -----------------------
-    // Parameters
-    // -----------------------
     function getParams() {
-      const minBpm = Number(ui.minBpm.value);
-      const maxBpm = Number(ui.maxBpm.value);
-      const threshold = Number(ui.threshold.value);
-      const smoothing = Number(ui.smoothing.value);
-      return { minBpm, maxBpm, threshold, smoothing };
+      return {
+        minBpm: Number(ui.minBpm.value),
+        maxBpm: Number(ui.maxBpm.value),
+        threshold: Number(ui.threshold.value),
+        smoothing: Number(ui.smoothing.value),
+      };
     }
-
     function refreshLabels() {
       ui.minBpmLabel.textContent = ui.minBpm.value;
       ui.maxBpmLabel.textContent = ui.maxBpm.value;
       ui.thresholdLabel.textContent = Number(ui.threshold.value).toFixed(2);
       ui.smoothingLabel.textContent = Number(ui.smoothing.value).toFixed(2);
     }
-    ui.minBpm.addEventListener('input', refreshLabels);
-    ui.maxBpm.addEventListener('input', refreshLabels);
-    ui.threshold.addEventListener('input', refreshLabels);
-    ui.smoothing.addEventListener('input', refreshLabels);
+    ui.minBpm.addEventListener("input", refreshLabels);
+    ui.maxBpm.addEventListener("input", refreshLabels);
+    ui.threshold.addEventListener("input", refreshLabels);
+    ui.smoothing.addEventListener("input", refreshLabels);
     refreshLabels();
 
-    // -----------------------
-    // Motion processing
-    // -----------------------
+    const MOTION_STALE_MS = 1500;
+    const PAUSE_DEBOUNCE_MS = 350;
+
     let motionEnabled = false;
     let lastMotionTs = 0;
-
-    // Smoothed intensity (0..~?)
     let intensity = 0;
 
-    // For pause/resume behavior
     let isPlaying = false;
     let pausedAtSeconds = 0;
     let lastAboveThresholdTs = 0;
 
-    // If we haven't received motion events for this long, we consider sensors unavailable.
-    const MOTION_STALE_MS = 1500;
-
-    // Pause only after staying below threshold for a moment (prevents flicker).
-    const PAUSE_DEBOUNCE_MS = 350;
-
     function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
-
     function mapIntensityToBpm(inten, minBpm, maxBpm) {
-      // A gentle curve so small motion makes a noticeable change.
-      // Tuned empirically; you can change the scaling factor to taste.
-      const scaled = 1 - Math.exp(-inten * 2.3); // 0..1
+      const scaled = 1 - Math.exp(-inten * 2.3);
       return minBpm + scaled * (maxBpm - minBpm);
     }
-
     function updateUI(inten, bpm, threshold) {
       ui.motionVal.textContent = inten.toFixed(2);
-      ui.bpmVal.textContent = (bpm ? bpm.toFixed(0) : '—');
+      ui.bpmVal.textContent = bpm ? bpm.toFixed(0) : "—";
       ui.thrVal.textContent = threshold.toFixed(2);
-
-      // Meter: treat 0.0..1.2 as "full" by default
       const meterPct = clamp((inten / 1.2) * 100, 0, 100);
-      ui.meterFill.style.width = meterPct.toFixed(1) + '%';
+      ui.meterFill.style.width = meterPct.toFixed(1) + "%";
     }
 
-    // Motion intensity combines linear acceleration + rotation.
-    // The units are not super meaningful, so we treat it as a relative signal.
     function computeInstantIntensity(ev) {
-      // iOS sometimes reports nulls.
       const a = ev.acceleration || ev.accelerationIncludingGravity;
       const r = ev.rotationRate;
 
@@ -264,29 +228,20 @@
       const rb = r && Number.isFinite(r.beta) ? r.beta : 0;
       const rg = r && Number.isFinite(r.gamma) ? r.gamma : 0;
       const rotMag = Math.sqrt(ra*ra + rb*rb + rg*rg);
+      const rotScaled = rotMag / 180;
 
-      // Weight rotation less heavily (degrees/sec can be large).
-      const rotScaled = rotMag / 180; // ~0.. maybe 2
-
-      // Combine; tweak weights as desired
       return accelMag * 0.55 + rotScaled * 0.45;
     }
 
     function onMotion(ev) {
       lastMotionTs = performance.now();
-
       const { smoothing } = getParams();
       const inst = computeInstantIntensity(ev);
-
-      // Exponential smoothing
       intensity = smoothing * intensity + (1 - smoothing) * inst;
-
-      // Update playback based on intensity
       tickPlayback();
     }
 
-    // Also listen to orientation as a fallback "activity" signal
-    // (some environments restrict devicemotion but allow deviceorientation).
+    // orientation fallback
     let lastOrient = null;
     function onOrientation(ev) {
       lastMotionTs = performance.now();
@@ -295,7 +250,7 @@
         const db = (ev.beta ?? 0) - (lastOrient.beta ?? 0);
         const dg = (ev.gamma ?? 0) - (lastOrient.gamma ?? 0);
         const d = Math.sqrt(da*da + db*db + dg*dg);
-        const inst = d / 90; // scale to ~0..2
+        const inst = d / 90;
         const { smoothing } = getParams();
         intensity = smoothing * intensity + (1 - smoothing) * inst;
         tickPlayback();
@@ -303,119 +258,78 @@
       lastOrient = { alpha: ev.alpha, beta: ev.beta, gamma: ev.gamma };
     }
 
-    // -----------------------
-    // MIDI loading + playback via Tone
-    // -----------------------
+    function attachMotionListeners() {
+      if (motionEnabled) return;
+      motionEnabled = true;
+      lastMotionTs = performance.now();
+      lastAboveThresholdTs = performance.now();
+      window.addEventListener("devicemotion", onMotion, { passive: true });
+      window.addEventListener("deviceorientation", onOrientation, { passive: true });
+    }
+
+    async function requestMotionPermissionIfNeeded() {
+      if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
+        const res = await DeviceMotionEvent.requestPermission();
+        if (res !== "granted") throw new Error("Motion permission not granted.");
+      }
+      if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
+        try { await DeviceOrientationEvent.requestPermission(); } catch (_) {}
+      }
+    }
+
     let midiData = null;
     let parts = [];
     let piano = null;
 
-    function setState(text) { ui.state.textContent = text; }
+    function setState(t) { ui.state.textContent = t; }
 
     function clearParts() {
-      for (const p of parts) {
-        try { p.stop(); } catch (_) {}
-        try { p.dispose(); } catch (_) {}
-      }
+      for (const p of parts) { try { p.stop(); p.dispose(); } catch (_) {} }
       parts = [];
     }
 
-    function buildInstruments() {
+    function buildPiano() {
       if (piano) return;
-
-      // Sampled piano (Salamander Grand) hosted by Tone.js
-      // Works well on iOS and sounds much closer to a real piano than an oscillator synth.
       piano = new Tone.Sampler({
         urls: {
-          A0: 'A0.mp3',
-          C1: 'C1.mp3',
-          'D#1': 'Ds1.mp3',
-          'F#1': 'Fs1.mp3',
-          A1: 'A1.mp3',
-          C2: 'C2.mp3',
-          'D#2': 'Ds2.mp3',
-          'F#2': 'Fs2.mp3',
-          A2: 'A2.mp3',
-          C3: 'C3.mp3',
-          'D#3': 'Ds3.mp3',
-          'F#3': 'Fs3.mp3',
-          A3: 'A3.mp3',
-          C4: 'C4.mp3',
-          'D#4': 'Ds4.mp3',
-          'F#4': 'Fs4.mp3',
-          A4: 'A4.mp3',
-          C5: 'C5.mp3',
-          'D#5': 'Ds5.mp3',
-          'F#5': 'Fs5.mp3',
-          A5: 'A5.mp3',
-          C6: 'C6.mp3',
-          'D#6': 'Ds6.mp3',
-          'F#6': 'Fs6.mp3',
-          A6: 'A6.mp3',
-          C7: 'C7.mp3',
-          'D#7': 'Ds7.mp3',
-          'F#7': 'Fs7.mp3',
-          A7: 'A7.mp3',
-          C8: 'C8.mp3'
+          A0: "A0.mp3", C1: "C1.mp3", "D#1": "Ds1.mp3", "F#1": "Fs1.mp3",
+          A1: "A1.mp3", C2: "C2.mp3", "D#2": "Ds2.mp3", "F#2": "Fs2.mp3",
+          A2: "A2.mp3", C3: "C3.mp3", "D#3": "Ds3.mp3", "F#3": "Fs3.mp3",
+          A3: "A3.mp3", C4: "C4.mp3", "D#4": "Ds4.mp3", "F#4": "Fs4.mp3",
+          A4: "A4.mp3", C5: "C5.mp3", "D#5": "Ds5.mp3", "F#5": "Fs5.mp3",
+          A5: "A5.mp3", C6: "C6.mp3", "D#6": "Ds6.mp3", "F#6": "Fs6.mp3",
+          A6: "A6.mp3", C7: "C7.mp3", "D#7": "Ds7.mp3", "F#7": "Fs7.mp3",
+          A7: "A7.mp3", C8: "C8.mp3",
         },
         release: 1,
-        baseUrl: 'https://tonejs.github.io/audio/salamander/',
+        baseUrl: "https://tonejs.github.io/audio/salamander/",
       }).toDestination();
-
       piano.volume.value = -6;
     }
 
     function scheduleMidi(midi) {
       clearParts();
-      buildInstruments();
+      buildPiano();
 
       Tone.Transport.loop = false;
       Tone.Transport.position = 0;
       Tone.Transport.seconds = 0;
 
-      // Convert each track to a Tone.Part
       for (const track of midi.tracks) {
-        if (!track.notes || track.notes.length === 0) continue;
-
-        const events = track.notes.map(n => ({
-          time: n.time,
-          duration: n.duration,
-          midi: n.midi,
-          velocity: n.velocity
-        }));
-
-        const part = new Tone.Part((time, value) => {
-          const freq = Tone.Frequency(value.midi, 'midi');
-          const vel = clamp(value.velocity ?? 0.9, 0.0, 1.0);
-          piano.triggerAttackRelease(freq, value.duration, time, vel);
+        if (!track.notes?.length) continue;
+        const events = track.notes.map(n => ({ time:n.time, duration:n.duration, midi:n.midi, velocity:n.velocity }));
+        const part = new Tone.Part((time, v) => {
+          const freq = Tone.Frequency(v.midi, "midi");
+          const vel = clamp(v.velocity ?? 0.9, 0, 1);
+          piano.triggerAttackRelease(freq, v.duration, time, vel);
         }, events);
-
         part.start(0);
         parts.push(part);
       }
-
-      // If the MIDI has a tempo, use it as the "midpoint" of our mapping.
-      // We still allow min/max controls to define the motion range.
-      const midiBpm = midi.header?.tempos?.[0]?.bpm;
-      if (Number.isFinite(midiBpm)) {
-        const { minBpm, maxBpm } = getParams();
-        // Nudge min/max around the file tempo if user hasn't touched them much.
-        // (Only do a mild adjustment.)
-        const targetMid = midiBpm;
-        const curMid = (minBpm + maxBpm) / 2;
-        const delta = clamp(targetMid - curMid, -25, 25);
-        const newMin = clamp(minBpm + delta, 30, 140);
-        const newMax = clamp(maxBpm + delta, 80, 320);
-        ui.minBpm.value = String(Math.round(newMin));
-        ui.maxBpm.value = String(Math.round(newMax));
-        refreshLabels();
-      }
-
-      setState('ready (move to play)');
+      setState("ready (move to play)");
     }
 
     async function loadMidiFromUrl(url) {
-      // Same-origin fetch (GitHub Pages) avoids CORS issues.
       const res = await fetch(url);
       if (!res.ok) throw new Error(`Failed to fetch MIDI (HTTP ${res.status}).`);
       const buf = await res.arrayBuffer();
@@ -423,26 +337,20 @@
       scheduleMidi(midiData);
     }
 
-    // -----------------------
-    // Transport control
-    // -----------------------
     function startTransport() {
       if (isPlaying) return;
-      // Start from paused position
-      Tone.Transport.start('+0.01', pausedAtSeconds);
+      Tone.Transport.start("+0.01", pausedAtSeconds);
       isPlaying = true;
       ui.stopBtn.disabled = false;
-      setState('playing');
+      setState("playing");
     }
-
     function pauseTransport() {
       if (!isPlaying) return;
       pausedAtSeconds = Tone.Transport.seconds;
       Tone.Transport.pause();
       isPlaying = false;
-      setState('paused');
+      setState("paused");
     }
-
     function stopAll() {
       pausedAtSeconds = 0;
       isPlaying = false;
@@ -450,119 +358,63 @@
       lastOrient = null;
       try { Tone.Transport.stop(); } catch (_) {}
       updateUI(0, null, getParams().threshold);
-      setState('stopped');
+      setState("stopped");
       ui.stopBtn.disabled = true;
     }
 
-    // Called whenever intensity updates.
     function tickPlayback() {
       const now = performance.now();
       const { minBpm, maxBpm, threshold } = getParams();
 
-      // If MIDI not loaded yet, still update UI.
       const bpm = mapIntensityToBpm(intensity, minBpm, maxBpm);
       updateUI(intensity, midiData ? bpm : null, threshold);
-
       if (!midiData) return;
 
-      // Safety: if motion data is stale, pause.
       if (now - lastMotionTs > MOTION_STALE_MS) {
         pauseTransport();
-        setState('no motion data');
+        setState("no motion data");
         return;
       }
 
-      // Apply tempo continuously (clamped)
       Tone.Transport.bpm.rampTo(clamp(bpm, 20, 400), 0.08);
 
-      // Start/pause logic with debounce
       if (intensity >= threshold) {
         lastAboveThresholdTs = now;
         if (!isPlaying) startTransport();
-      } else {
-        if (isPlaying && (now - lastAboveThresholdTs) > PAUSE_DEBOUNCE_MS) {
-          pauseTransport();
-        }
+      } else if (isPlaying && (now - lastAboveThresholdTs) > PAUSE_DEBOUNCE_MS) {
+        pauseTransport();
       }
-    }
-
-    // -----------------------
-    // Permission + setup
-    // -----------------------
-    async function requestMotionPermissionIfNeeded() {
-      // iOS requires this to be called from a user gesture.
-      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-        const res = await DeviceMotionEvent.requestPermission();
-        if (res !== 'granted') throw new Error('Motion permission not granted.');
-      }
-      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        // Some iOS versions gate orientation separately.
-        try {
-          const res2 = await DeviceOrientationEvent.requestPermission();
-          if (res2 !== 'granted') {
-            // not fatal; devicemotion may still work.
-          }
-        } catch (_) {}
-      }
-    }
-
-    function attachMotionListeners() {
-      if (motionEnabled) return;
-      motionEnabled = true;
-      lastMotionTs = performance.now();
-      lastAboveThresholdTs = performance.now();
-
-      window.addEventListener('devicemotion', onMotion, { passive: true });
-      window.addEventListener('deviceorientation', onOrientation, { passive: true });
     }
 
     async function enableAll() {
       ui.enableBtn.disabled = true;
-      setState('enabling…');
-
+      setState("enabling…");
       try {
-        // IMPORTANT (iOS): both Motion permission prompts and AudioContext start
-        // MUST be triggered directly from this user gesture.
-        // If you await something first, iOS considers it no longer a gesture.
-        const motionPerm = requestMotionPermissionIfNeeded();
-        const audioStart = Tone.start();
-        await Promise.all([motionPerm, audioStart]);
+        // iOS gesture rule: start both immediately (NO await first)
+        const permPromise = requestMotionPermissionIfNeeded();
+        const audioPromise = Tone.start();
+        await Promise.all([permPromise, audioPromise]);
 
         attachMotionListeners();
 
-        // Load MIDI (from URL)
+        setState("loading MIDI…");
         await loadMidiFromUrl(MIDI_URL);
 
-        // Prime UI
-        updateUI(intensity, null, getParams().threshold);
-        ui.stopBtn.disabled = false;
-        setState('ready (move to play)');
-
+        setState("ready (move to play)");
       } catch (err) {
         console.error(err);
-        setState('error');
+        setState("error");
         alert(String(err?.message || err));
       } finally {
         ui.enableBtn.disabled = false;
       }
     }
 
-    ui.enableBtn.addEventListener('click', enableAll);
-    ui.stopBtn.addEventListener('click', stopAll);
+    // Using pointerdown helps on iOS (more reliably treated as a gesture than click)
+    ui.enableBtn.addEventListener("pointerdown", enableAll);
+    ui.stopBtn.addEventListener("pointerdown", stopAll);
 
-    // If the user chooses a new MIDI file, stop and reset.
-    // No file picker now; to change the piece, replace ./assets/debussy.mid and redeploy.
-      midiData = null;
-      clearParts();
-      setState('idle');
-    });
-
-    // Keep UI alive even without motion events (for stale detection)
-    setInterval(() => {
-      if (!motionEnabled) return;
-      tickPlayback();
-    }, 200);
-
+    setInterval(() => { if (motionEnabled) tickPlayback(); }, 200);
   </script>
 </body>
 </html>
